@@ -1,8 +1,11 @@
 const express = require('express');
+const andamentoRouter = require('./controller/andamentos');
 
 const app = express();
-
-app.arguments(express.json());
-
 const PORT = 3000;
-app.listen(() => console.log(`Juridico server running on port ${PORT}`));
+
+app.use(express.json());
+
+app.use('/andamentos', andamentoRouter);
+
+app.listen(PORT, () => console.log(`Juridico server running on port ${PORT}`));
