@@ -19,9 +19,24 @@ const getLawsuitTRF1 = async (lawsuit) => {
       'div td[id^="fPP:processosTable:1705856:j_id227"]'
     );
     const firstResult = await results.evaluate((result) => result.innerHTML)
+    const suitors = await results.evaluate((result) =>
+      document.querySelector('.rich-table-cell:nth-child(2)')
+      .innerText.split('\n')[2]);
+
     const hashLawsuitNumber = getHashFromElement(firstResult);
     const newTab = await browser.newPage();
     await newTab.goto(`${DEFAULT_URL}${hashLawsuitNumber}`);
+
+    // Lawsuit info
+    const jurisdiction = await newTab.evaluate((el) =>
+      document.querySelector('.rich-stglpanel-body table tbody tr:nth-child(2) td')
+      .innerText.split('\n')[1]);
+
+    const subject = await newTab.evaluate((el) =>
+    document.querySelector('.rich-stglpanel-body table tbody tr:nth-child(1) td:nth-child(4)')
+    .innerText.split('\n')[1]);
+
+    //Lawsuit progress
     const progressTable = await newTab.waitForSelector('td>div>div>span');
     const progress = await progressTable.evaluate((el) => {
       let elements = Array.from(document.querySelectorAll('td>div>div>span'));
@@ -36,7 +51,14 @@ const getLawsuitTRF1 = async (lawsuit) => {
       progress.pop();
       return progress;
     });
-    return progress;
+    return {
+      court: 'TRF-1',
+      lawsuit,
+      jurisdiction,
+      subject,
+      suitors,
+      progress,
+    }
   }
 
   return getLawsuitProgress(lawsuit);
