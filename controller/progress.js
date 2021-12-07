@@ -1,9 +1,9 @@
 const router = require('express').Router();
-const acessarProcesso = require('../service/andamentos');
+const { getLawsuitTRF1 } = require('../service/progress');
 
 router.get('/', async (req, res, next) => {
-  const { processo } = req.body;
-  const response = await acessarProcesso(processo);
+  const { lawsuit } = req.body;
+  const response = await getLawsuitTRF1(lawsuit);
   return res.status(200).send(response);
 })
 

@@ -1,11 +1,11 @@
 const express = require('express');
-const andamentoRouter = require('./controller/andamentos');
+const progressRouter = require('./controller/progress');
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 
-app.use('/andamentos', andamentoRouter);
+app.use('/progress', progressRouter);
 
 app.listen(PORT, () => console.log(`Juridico server running on port ${PORT}`));
