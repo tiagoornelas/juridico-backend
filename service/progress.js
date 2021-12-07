@@ -8,16 +8,18 @@ const getLawsuitTRF1 = async (lawsuit) => {
     + "ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=";
 
     const browser = await puppeteer.launch({
-      headless: false,
       executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
     });
+    setTimeout(() => browser.close(), 15000);
     const trf1 = await browser.newPage();
     await trf1.goto('https://pje1g.trf1.jus.br/consultapublica/ConsultaPublica/listView.seam');
+    await trf1.setDefaultTimeout(10000);
     await trf1.type('.value input', lawsuit);
     await trf1.click(('input.btn'));
     const results = await trf1.waitForSelector(
-      'div td[id^="fPP:processosTable:1705856:j_id227"]'
+      '.rich-table-cell:nth-child(2)'
     );
+
     const firstResult = await results.evaluate((result) => result.innerHTML)
     const suitors = await results.evaluate((result) =>
       document.querySelector('.rich-table-cell:nth-child(2)')
@@ -51,6 +53,11 @@ const getLawsuitTRF1 = async (lawsuit) => {
       progress.pop();
       return progress;
     });
+
+    // Close browser tabs 
+    await browser.close();
+
+    // Return values;
     return {
       court: 'TRF-1',
       lawsuit,
@@ -61,7 +68,7 @@ const getLawsuitTRF1 = async (lawsuit) => {
     }
   }
 
-  return getLawsuitProgress(lawsuit);
+    return getLawsuitProgress(lawsuit);
 }
 
 module.exports = { getLawsuitTRF1 };
